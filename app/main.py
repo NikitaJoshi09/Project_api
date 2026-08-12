@@ -19,7 +19,7 @@ def on_startup():
 
 @app.get("/")
 def home():
-    return {"message": "Product Inventory API is running"}
+    return {"message": "Product API is running"}
 
 app.include_router(auth.router)
 app.include_router(product.router)        

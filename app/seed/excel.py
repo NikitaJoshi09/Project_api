@@ -4,8 +4,6 @@ from sqlmodel import Session, select
 from app.database import engine
 from app.models.product import Product
 
-
-
 # Excel file path
 
 
@@ -16,8 +14,6 @@ EXCEL_PATH = BASE_DIR / "Product_Data.xlsx"
 
 
 # Import products
-
-
 def import_products():
 
     # Check Excel file
