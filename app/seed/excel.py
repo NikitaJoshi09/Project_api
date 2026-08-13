@@ -4,15 +4,15 @@ from sqlmodel import Session, select
 from app.database import engine
 from app.models.product import Product
 
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+#Get file path in folder 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) #Gives the path of the current Python file
 EXCEL_FILE = os.path.join(BASE_DIR, "Product_Data.xlsx")
 
 
-def import_products():
+def import_products():#Excel into the database.
     df = pd.read_excel(EXCEL_FILE,sheet_name="Product Data")
     with Session(engine) as session:
-        for _, row in df.iterrows():
+        for _, row in df.iterrows():#Looping through Excel rows
             sku = str(row["Product ID"])
             existing_product = session.exec(select(Product).where(Product.sku == sku )).first()
             if existing_product:

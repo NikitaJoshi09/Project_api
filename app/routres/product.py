@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,UploadFile,File
 from sqlmodel import Session, select
 from app.database import get_session
 from app.models.product import Product
 from app.models.user import User
 from app.services.product_service import get_current_user
 from app.seed.excel import import_products
+import pandas as pd
 
 router = APIRouter(prefix="/products",tags=["Products"])
 
@@ -114,4 +115,34 @@ def delete_product(product_id: int,session: Session = Depends(get_session),curre
     session.commit()
     return {
         "message": "Product deleted successfully"
+    }
+
+# upload excel
+@router.post("/upload-excel")
+async def upload_excel( file: UploadFile = File(...), db: Session = Depends(get_session), current_user = Depends(get_current_user)):
+
+    # Check file
+    if not file.filename.endswith(".xlsx"):
+        raise HTTPException(status_code=400,detail="Only .xlsx Excel files are allowed")
+
+    # Read Excel file
+    df = pd.read_excel(file.file)
+
+    # Check column names
+    required_columns = ["name","sku","category","price", "quantity"]
+
+    for column in required_columns:
+        if column not in df.columns:
+            raise HTTPException(status_code=400,detail=f"Missing column: {column}")
+
+    # Insert Excel data into database
+    for _, row in df.iterrows():
+
+        product = Product(name=row["name"],sku=row["sku"],category=row["category"],price=float(row["price"]),quantity=int(row["quantity"]))
+        db.add(product)
+        db.commit()
+
+    return {
+        "message": "Excel uploaded successfully",
+        "total_records": len(df)
     }
