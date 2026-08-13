@@ -2,7 +2,7 @@
 
 A backend REST API built with **FastAPI** for managing products with secure **JWT authentication**, **PostgreSQL database**, and **SQLAlchemy ORM**.
 
-The project also includes an Excel-based data seeding feature to import product data into the database.
+The projects also includes an Excel-based data seeding feature to import product data into the database.
 
 ---
 
